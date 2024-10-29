@@ -1,12 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-
+import StackNavigator from './navigation/StackNavigator';
+import { StatusBar } from 'react-native';
+import Toast from 'react-native-toast-message';
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      
+    <StatusBar barStyle="light-content" />
+    <StackNavigator/>
+    <Toast/>
+    </>
+  
   );
 }
 
