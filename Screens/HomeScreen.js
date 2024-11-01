@@ -1,83 +1,115 @@
+import React, { useState } from "react";
 import {
-  FlatList,
   Image,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import SliderList from "../lists/SliderList";
-import { sliderData } from "../source/Data";
+import { LinearGradient } from "expo-linear-gradient";
+import Octicons from "@expo/vector-icons/Octicons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import SearchBar from "../components/SearchBar";
+import Categories from "../lists/Categories";
+import BookList from "../lists/BookList";
+import AllBooks from "../lists/AllBooks";
+import { bookslist, categories } from "../source/Data";
+import { useTheme } from "../ThemeContext";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
+  const [color, setColor] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(1);
+
+  const { isDarkMode, toggleTheme } = useTheme();
+
+  const toggleImage = () => {
+    setColor(!color);
+  };
+
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
+
+  const filteredBooks = bookslist.filter(
+    (book) =>
+      book.catagory === categories.find((c) => c.id === selectedCategory).title
+  );
+
+  const handleBookClick = (item) => {
+    navigation.navigate("BookDetailsScreen", { item });
+  };
+
   return (
-    <>
-      <StatusBar backgroundColor="white" barStyle="dark-content" />
-
-      <View style={styles.container}>
+    <ScrollView>
+      <StatusBar
+        backgroundColor={isDarkMode ? "#333" : "#fff"}
+        barStyle={isDarkMode ? "light-content" : "dark-content"}
+      />
+      <LinearGradient
+        colors={isDarkMode ? ["#09FBD380", "black", "purple", "#09FBD380"] : ["#fff", "#fff"]}
+        style={[styles.container, { backgroundColor: isDarkMode ? "#333" : "#fff" }]}
+      >
         <View style={styles.header}>
           <TouchableOpacity>
-            <FontAwesome name="plus" size={26} color="black" />
+            <Octicons name="three-bars" size={30} color={isDarkMode ? "#fff" : "black"} />
           </TouchableOpacity>
 
-          <View style={styles.innerHeader}>
-            <TouchableOpacity>
-              <FontAwesome name="toggle-off" size={30} color="black" />
-            </TouchableOpacity>
-            <View style={styles.imgView}>
+          <View style={styles.headerInnerView}>
+            <TouchableOpacity onPress={() => { toggleTheme(); toggleImage(); }}>
               <Image
-                source={require("../assets/icon.png")}
-                style={{ width: 40, height: 40, borderRadius: 20 }}
-                resizeMode="center"
+                source={color ? require("../assets/Images/one.png") : require("../assets/Images/two.png")}
+                style={styles.image}
               />
-            </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={()=>navigation?.navigate("SettingScreen")}>
+
+            <FontAwesome6 name="circle-user" size={40} color={isDarkMode ? "#fff" : "black"} />
+            </TouchableOpacity>
           </View>
         </View>
-        
-        <View style={styles.afterHeader}>
-          <Text
-            numberOfLines={2}
-            style={{ fontSize: 16, fontWeight: "500", color: "#9D9D9D" }}
-          >
-            Welcome back, Bunny!
-          </Text>
-          <Text
-            numberOfLines={3}
-            style={{ fontSize: 26, fontWeight: "500", color: "#19191B" }}
-          >
-            What do you want to read today?
-          </Text>
+
+        {/* Greeting Section */}
+        <View style={styles.greetingView}>
+          <View style={styles.greetingInnerView}>
+            <Text style={{ fontSize: 16, fontWeight: "500", color: isDarkMode ? "#aaa" : "#9D9D9D" }}>
+              Welcome back, Mujtaba!
+            </Text>
+            <Text style={{ fontSize: 26, fontWeight: "500", color: isDarkMode ? "#eee" : "#19191B" }}>
+              What do you want to read today?
+            </Text>
+          </View>
         </View>
-        
-        <View style={styles.searchView}>
-          <EvilIcons name="search" size={28} color="gray" />
-          <TextInput placeholder="SEARCH" style={styles.inputSearch} />
+
+        {/* Search Bar */}
+        <View style={styles.searchBarView}>
+          <SearchBar />
         </View>
-        
-        <View style={styles.txtView}>
-          <Text style={{ fontSize: 24, fontWeight: "bold", color: "#19191B" }}>
-            Find Your Favorite Book
+
+        {/* Categories Section */}
+        <View style={{ width: "90%", paddingTop: 30, paddingBottom: 25 }}>
+          <Categories selectedCategory={selectedCategory} onSelectCategory={handleCategorySelect} />
+        </View>
+
+        {/* Book List */}
+        <View style={styles.BooksView}>
+          <BookList books={filteredBooks} onPress={handleBookClick} />
+        </View>
+
+        {/* New Arrivals */}
+        <View style={styles.newArrivallsView}>
+          <Text style={{ fontSize: 26, fontWeight: "600", color: isDarkMode ? "#eee" : "#000" }}>
+            All Books
           </Text>
         </View>
 
-       
-        <View style={{ flex: 1, width: "90%", paddingTop: 20 }}>
-          <FlatList
-            data={sliderData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <SliderList item={item} />}
-            showsVerticalScrollIndicator={false} 
-            contentContainerStyle={{gap:10, paddingBottom:10,}}
-
-          />
+        <View style={styles.BooksViewTwo}>
+          <AllBooks onPress={handleBookClick} />
         </View>
-      </View>
-    </>
+      </LinearGradient>
+    </ScrollView>
   );
 };
 
@@ -85,58 +117,47 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FDFDFD",
+    width: "100%",
     flex: 1,
     alignItems: "center",
+    paddingBottom: 99,
   },
   header: {
     width: "90%",
-    height: 50,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 20,
-  },
-  imgView: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  innerHeader: {
-    flexDirection: "row",
-    width: "30%",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  afterHeader: {
-    paddingTop: 20,
-    width: "90%",
-    gap: 10,
-    paddingBottom: 20,
-  },
-  searchView: {
-    width: "90%",
-    height: 49,
-    backgroundColor: "#C4C4C426",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 3,
-    borderRadius: 5,
-  },
-  inputSearch: {
-    width: "90%",
-    height: 48,
-    fontSize: 20,
-  },
-  txtView: {
-    width: "90%",
-    justifyContent: "flex-end",
+    paddingHorizontal: 10,
     paddingTop: 15,
-    paddingBottom: 5,
-    borderBottomWidth: 0.4,
-    borderColor: "gray",
+  },
+  headerInnerView: {
+    flexDirection: "row",
+    gap: 20,
+    alignItems: "center",
+  },
+  greetingView: {
+    width: "90%",
+    paddingHorizontal: 9,
+    paddingTop: 25,
+  },
+  greetingInnerView: {
+    width: "75%",
+    gap: 10,
+    paddingBottom: 25,
+  },
+  searchBarView: {
+    width: "86%",
+    paddingBottom: 10,
+  },
+  BooksView: {
+    width: "90%",
+  },
+  newArrivallsView: {
+    width: "86%",
+    paddingTop: 20,
+  },
+  BooksViewTwo: {
+    width: "90%",
+    paddingTop: 20,
   },
 });

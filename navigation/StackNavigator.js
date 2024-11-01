@@ -11,6 +11,9 @@ import Toast from 'react-native-toast-message';
 import HomeScreen from '../Screens/HomeScreen';
 import BottomNavigator from './BottomNavigator';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import BookmarkScreen from '../Screens/BookmarkScreen';
+import BookDetailsScreen from '../Screens/BookDetailsScreen';
+import MyBooks from '../Screens/MyBooks';
 
 
 // Create the Stack Navigator
@@ -20,14 +23,18 @@ const StackNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown:false}}>
-        <Stack.Screen name="SplashScreen" component={SplashScreen} />
+     
+        {/* <Stack.Screen name="SplashScreen" component={SplashScreen} /> */}
         {/* <Stack.Screen name="LoginScreen" component={LoginScreen} /> */}
-        {/* <Stack.Screen name="SignupScreen" component={SignupScreen} /> */}
-        {/* <Stack.Screen name="ForgetScreen" component={ForgetScreen} /> */}
-        {/* <Stack.Screen name="OTPScreen" component={OTPScreen} /> */}
-        {/* <Stack.Screen name="SetPasswordScreen" component={SetPasswordScreen} /> */}
-        {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
+     
+        {/* <Stack.Screen name="SignupScreen" component={SignupScreen} />
+        <Stack.Screen name="ForgetScreen" component={ForgetScreen} />
+        <Stack.Screen name="OTPScreen" component={OTPScreen} />
+        <Stack.Screen name="SetPasswordScreen" component={SetPasswordScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
         <Stack.Screen name='BottomNavigator'component={BottomNavigator}/>
+        <Stack.Screen name='BookDetailsScreen' component={BookDetailsScreen}/>
+        <Stack.Screen name="MyBooks" component={MyBooks}/>
 
        
 
