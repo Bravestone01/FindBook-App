@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  FlatList
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Octicons from "@expo/vector-icons/Octicons";
@@ -21,6 +22,8 @@ import { useTheme } from "../ThemeContext";
 const HomeScreen = ({ navigation }) => {
   const [color, setColor] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(1);
+  const [searchQuery , setSearchQuery]= useState("")
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -32,12 +35,16 @@ const HomeScreen = ({ navigation }) => {
     setSelectedCategory(categoryId);
   };
 
+  const searchBook = bookslist.filter((book)=>
+  book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+
   const filteredBooks = bookslist.filter(
     (book) =>
       book.catagory === categories.find((c) => c.id === selectedCategory).title
   );
 
   const handleBookClick = (item) => {
+    setDropdownVisible(false);
     navigation.navigate("BookDetailsScreen", { item });
   };
 
@@ -85,7 +92,28 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Search Bar */}
         <View style={styles.searchBarView}>
-          <SearchBar />
+        <SearchBar
+            value={searchQuery}
+            onChangeText={(text) => {
+              setSearchQuery(text);
+              setDropdownVisible(text.length > 0); 
+            }}
+          />
+          {isDropdownVisible && (
+            <FlatList
+              data={searchBook}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => handleBookClick(item)}
+                >
+                  <Text style={styles.dropdownText}>{item.title}</Text>
+                </TouchableOpacity>
+              )}
+              style={styles.dropdown}
+            />
+          )}
         </View>
 
         {/* Categories Section */}
@@ -95,13 +123,13 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Book List */}
         <View style={styles.BooksView}>
-          <BookList books={filteredBooks} onPress={handleBookClick} />
+          <BookList books={filteredBooks} searchBook={searchBook} onPress={handleBookClick} />
         </View>
 
         {/* New Arrivals */}
         <View style={styles.newArrivallsView}>
           <Text style={{ fontSize: 26, fontWeight: "600", color: isDarkMode ? "#eee" : "#000" }}>
-            All Books
+            New Arrivals
           </Text>
         </View>
 
@@ -159,5 +187,26 @@ const styles = StyleSheet.create({
   BooksViewTwo: {
     width: "90%",
     paddingTop: 20,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  dropdown: {
+    position:"relative",
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    maxHeight: 150,
   },
 });

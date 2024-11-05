@@ -4,7 +4,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useTheme } from '../ThemeContext';
 
-const SearchBar = () => {
+const SearchBar = ({value, onChangeText}) => {
   const { isDarkMode } = useTheme();
 
   const backgroundStyle = {
@@ -15,7 +15,7 @@ const SearchBar = () => {
     <View style={[styles.container,backgroundStyle]}>
          <View style={styles.innerView}>
          <AntDesign name="search1" size={22} color="gray" />
-         <TextInput placeholder='Search' style={styles.inputStyle} />
+         <TextInput placeholder='Search' style={styles.inputStyle}  value={value} onChangeText={onChangeText} />
             
          </View>
 

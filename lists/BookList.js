@@ -11,7 +11,8 @@ import { bookslist } from "../source/Data";
 import { useTheme } from "../ThemeContext";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const BookList = ({books, onPress}) => {
+
+const BookList = ({books, onPress, }) => {
   const { isDarkMode } = useTheme();
 
   const textStyle = {

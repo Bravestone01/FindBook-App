@@ -12,14 +12,14 @@ import { useTheme } from "../ThemeContext";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Foundation from "@expo/vector-icons/Foundation";
+import { useBookmarks } from '../BookmarkContext';
+import Toast from "react-native-toast-message";
 
 const BookDetailsScreen = ({ route, navigation }) => {
   const { isDarkMode } = useTheme();
-
-  // Use optional chaining and provide a fallback object if book is missing
-  const { item } = route?.params || {};
-
-  // Check if book exists, and return a fallback message if not
+  const { addBookmark } = useBookmarks();
+  const { item } = route.params;
+;
   if (!item) {
     return (
       <View style={styles.container}>
@@ -28,7 +28,17 @@ const BookDetailsScreen = ({ route, navigation }) => {
         </Text>
       </View>
     );
-  }
+  };
+
+  const handleBookmark = () => {
+    addBookmark(item); 
+    
+    Toast.show({
+      type: "success",
+      text1: "Bookmarked!",
+      text2: "This book has been added to your bookmarks.",
+    });
+  };
 
   return (
     <>
@@ -51,14 +61,14 @@ const BookDetailsScreen = ({ route, navigation }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" size={30} color={isDarkMode ? "#fff" : "black"} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleBookmark}>
             <FontAwesome name="bookmark" size={30} color="tomato" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.imageView}>
           <Image
-            source={ item.Image } // Assuming `book.image` is a URI
+            source={ item.Image } 
             resizeMode="cover"
             style={styles.image}
           />
